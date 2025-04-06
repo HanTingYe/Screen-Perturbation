@@ -225,10 +225,6 @@ def load_data():
     # train_ds = tf.data.Dataset.list_files('miniimagenet/images_test/*.jpg', shuffle=False) #images images_test
     # train_ds = tf.data.Dataset.list_files('/data/volume_2/miniimagenet/images/*.jpg', shuffle=False)
     train_ds_name = train_ds
-    # train_ds = tf.data.Dataset.list_files('D:/Dropbox/TuD work/ScreenAI_Privacy_Underscreen/UPC_ICCP21_Code-main/Train/Toled/HQ/*.png', shuffle=False)
-    # train_ds = tf.data.Dataset.list_files('Train/Poled/HQ/*.png', shuffle=False)
-    # train_ds = tf.data.Dataset.list_files(data_path, shuffle=False)
-    # train_ds = train_ds.shuffle(240, reshuffle_each_iteration=True)
 
     AUTOTUNE = tf.data.experimental.AUTOTUNE
 
@@ -265,7 +261,6 @@ def load_data():
 
 
 def load_pattern():
-    # pattern_path = 'D:/Dropbox/TuD work/ScreenAI_Privacy_Underscreen/UPC_ICCP21_Code-main/data/pixelPatterns/POLED_42.png'
     pattern_path = 'data/pixelPatterns/POLED_42.png'
     # pattern_path = 'data/pixelPatterns/POLED_21.png'
     # pattern_path = '/data/volume_2/optimize_display_POLED_400PPI/data/pixelPatterns/POLED_42.png'
@@ -882,26 +877,6 @@ def optimize_pattern_with_data(opt):
 
                     # interfer_pixel[int(n / 2):n] = 2
 
-                    # One pixel denfender
-                    # interfer_pixel[36] = 3 ##green
-                    # interfer_pixel[37] = 3  ##blue
-                    # interfer_pixel[38] = 3  ##red nouse
-                    # interfer_pixel[39] = 3  ##green
-                    # interfer_pixel[40] = 3  ##blue nouse
-                    # interfer_pixel[35] = 3  ##red
-                    # interfer_pixel[34] = 3  ##blue
-                    # interfer_pixel[33] = 3  ##green nouse
-                    # interfer_pixel[43] = 3  ##nothing nouse
-                    # interfer_pixel[44] = 3  ##red nouse
-                    # interfer_pixel[45] = 3  ##green nouse
-                    # interfer_pixel[49] = 3  ##blue
-                    # interfer_pixel[50] = 3  ##red nouse
-                    # interfer_pixel[51] = 3  ##green
-
-                    # interfer_pixel[33] = 3  ##green
-                    # interfer_pixel[32] = 3  ##red
-                    # interfer_pixel[31] = 3  ##blue
-                    # 36 37 39 35 34 49 51
 
                     # Color denfender
                     # interfer_pixel = set_interfer_pixel(colorstatusbar_flag, interfer_pixel_red_index, interfer_pixel_green_index, interfer_pixel_blue_index)
@@ -936,15 +911,15 @@ def optimize_pattern_with_data(opt):
                     # all_interfer_pixel = tf.constant(all_interfer_pixel)
 
                     ## The default kernel is all 1 no longer design the kernel ###
-                    for ii in range(len(interfer_pixel_index)):
-                        all_interfer_pixel = np.where(all_interfer_pixel_index == interfer_pixel_index[ii],
-                                                      interfer_pixel[ii], all_interfer_pixel)
+                    # for ii in range(len(interfer_pixel_index)):
+                    #     all_interfer_pixel = np.where(all_interfer_pixel_index == interfer_pixel_index[ii],
+                    #                                   interfer_pixel[ii], all_interfer_pixel)
 
                     # all_interfer_pixel_ssim = np.ones(np.shape(all_interfer_pixel_index), dtype=np.float32)
                     all_interfer_pixel_ssim = all_interfer_pixel
-                    # for ii in range(len(interfer_pixel_index)):
-                    #     all_interfer_pixel_ssim = np.where(all_interfer_pixel_index == interfer_pixel_index[ii],
-                    #                                        interfer_pixel[ii], all_interfer_pixel_ssim)
+                    for ii in range(len(interfer_pixel_index)):
+                        all_interfer_pixel_ssim = np.where(all_interfer_pixel_index == interfer_pixel_index[ii],
+                                                           interfer_pixel[ii], all_interfer_pixel_ssim)
 
                     all_display_red_mask_ssim = all_Red_mask  # tf.cast(Red_mask)
                     all_display_green_mask_ssim = all_Green_mask  # tf.cast(Green_mask)
@@ -1019,9 +994,6 @@ def optimize_pattern_with_data(opt):
 
                     if (ssim_mean < ssim_min):
                         ssim_min = ssim_mean
-
-                    if ssim_mean < opt.ssim_threshold:
-                        location_flag = 0
 
                     # print(ssim_mean)
                     # print(cs_mean)
@@ -3000,7 +2972,6 @@ if __name__ == '__main__':
     parser.add_argument('--maxperturbation_power', type=float, default=10, help='max perturbation_power')
     parser.add_argument('--maxscreen_brightness', type=float, default=2, help='max screen_brightness')
     parser.add_argument('--probdiff_threshold', type=float, default=0, help='max screen_brightness')
-    parser.add_argument('--ssim_threshold', type=float, default=1, help='max screen_brightness')
     parser.add_argument('--pretrained', type=str, default='shufflenet_v2_x2_0', help='pretrained network model mobilenet_v3_large')
     parser.add_argument('--save_mode', type=str, default='both', help='both, all or crop')
     # parser.add_argument('--gpu_flag', type=int, default=1, help='statusbar color flag')

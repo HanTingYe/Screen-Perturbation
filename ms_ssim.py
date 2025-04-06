@@ -14,8 +14,7 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 
 # %%
-# 模仿matlab的fspecial函数，创建滤波算子（计算SSIM用）
-# 模仿matlab的fspecial函数，创建滤波算子（计算SSIM用）
+# Function to mimic the 'fspecial' gaussian MATLAB function
 def _tf_fspecial_gauss(size, sigma, channels=1):
     """Function to mimic the 'fspecial' gaussian MATLAB function
     """
@@ -49,43 +48,43 @@ def tf_ssim(img1, img2, cs_map=False, mean_metric=True, filter_size=11, filter_s
     C1 = (K1 * L) ** 2
     C2 = (K2 * L) ** 2
 
-    # 求取滑块内均值Ux Uy，均方值Ux_sq
+    # Calculate the mean value Ux Uy and the mean square value Ux_sq in the slider
     padded_img1 = tf.pad(img1, [[0, 0], [size // 2, size // 2], [size // 2, size // 2], [0, 0]],
-                         mode="CONSTANT")  # img1 上下左右补零
+                         mode="CONSTANT")  # img1 fills zeros on top, bottom, left and right
     padded_img2 = tf.pad(img2, [[0, 0], [size // 2, size // 2], [size // 2, size // 2], [0, 0]],
-                         mode="CONSTANT")  # img2 上下左右补零
-    mu1 = tf.nn.conv2d(padded_img1, window, strides=[1, 1, 1, 1], padding='VALID')  # 利用滑动窗口，求取窗口内图像的的加权平均
+                         mode="CONSTANT")  # img2 fills zeros on top, bottom, left and right
+    mu1 = tf.nn.conv2d(padded_img1, window, strides=[1, 1, 1, 1], padding='VALID')  # Use a sliding window to obtain the weighted average of the image in the window
     mu2 = tf.nn.conv2d(padded_img2, window, strides=[1, 1, 1, 1], padding='VALID')
     mu1_sq = mu1 * mu1  # img(x,y) Ux*Ux 均方
     mu2_sq = mu2 * mu2  # img(x,y) Uy*Uy
     mu1_mu2 = mu1 * mu2  # img(x,y) Ux*Uy
 
-    # 求取方差，方差等于平方的期望减去期望的平方，平方的均值减去均值的平方
+    # Calculate the variance, which is equal to the expectation of the square minus the square of the expectation, and the mean of the square minus the square of the mean
     paddedimg11 = padded_img1 * padded_img1
     paddedimg22 = padded_img2 * padded_img2
     paddedimg12 = padded_img1 * padded_img2
 
-    sigma1_sq = tf.nn.conv2d(paddedimg11, window, strides=[1, 1, 1, 1], padding='VALID') - mu1_sq  # sigma1方差
-    sigma2_sq = tf.nn.conv2d(paddedimg22, window, strides=[1, 1, 1, 1], padding='VALID') - mu2_sq  # sigma2方差
+    sigma1_sq = tf.nn.conv2d(paddedimg11, window, strides=[1, 1, 1, 1], padding='VALID') - mu1_sq  # sigma1 variance
+    sigma2_sq = tf.nn.conv2d(paddedimg22, window, strides=[1, 1, 1, 1], padding='VALID') - mu2_sq  # sigma2 variance
     sigma12 = tf.nn.conv2d(paddedimg12, window, strides=[1, 1, 1, 1],
-                           padding='VALID') - mu1_mu2  # sigma12协方差，乘积的均值减去均值的乘积
+                           padding='VALID') - mu1_mu2  # sigma12 covariance, the mean of the products minus the product of the means
 
     ssim_value = tf.clip_by_value(
         ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)), 0, 1)
-    if cs_map:  # 只考虑contrast对比度，structure结构，不考虑light亮度
-        cs_map_value = tf.clip_by_value((2 * sigma12 + C2) / (sigma1_sq + sigma2_sq + C2), 0, 1)  # 对比度结构map
+    if cs_map:  # Only consider contrast and structure, not light brightness
+        cs_map_value = tf.clip_by_value((2 * sigma12 + C2) / (sigma1_sq + sigma2_sq + C2), 0, 1)  # Contrast structure map
         value = (ssim_value, cs_map_value)
     else:
         value = ssim_value
-    if mean_metric:  # 求取矩阵的均值，否则返回ssim矩阵
+    if mean_metric:  # Find the mean of the matrix, otherwise return the ssim matrix
         value = tf.reduce_mean(value)
     return value
 
 
-# 计算跨尺度结构相似度指数（通过缩放原始图像方式）
+# Calculate the cross-scale structural similarity index (by scaling the original image)
 def tf_ms_ssim_resize(img1, img2, weights=None, return_ssim_map=None, filter_size=11, filter_sigma=1.5):
     if weights is None:
-        weights = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333]  # 论文中提到的几个参数
+        weights = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333]  # Parameters metioned in the paper
     level = len(weights)
     assert return_ssim_map is None or return_ssim_map < level
     weight = tf.constant(weights, dtype=tf.float32)
@@ -119,7 +118,7 @@ def tf_ms_ssim_resize(img1, img2, weights=None, return_ssim_map=None, filter_siz
         return value
 
 
-# 计算跨尺度结构相似度指数（通过扩大感受野方式）
+# Calculate the cross-scale structural similarity index (by expanding the receptive field)
 def tf_ms_ssim(img1, img2, weights=None, mean_metric=False):
     if weights is None:
         weights = [1, 1, 1, 1, 1]  # [0.0448, 0.2856, 0.3001, 0.2363, 0.1333] #[1, 1, 1, 1, 1] #

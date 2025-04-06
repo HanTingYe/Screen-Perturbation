@@ -1,6 +1,6 @@
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES']='1'
+os.environ['CUDA_VISIBLE_DEVICES']='0'
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 os.environ['XLA_PYTHON_CLIENT_ALLOCATOR'] = 'platform'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -124,9 +124,9 @@ def random_size(image, target_size=None):
     if height != 0 and width != 0:
         if height.numpy() * size_ratio.numpy() < target_size or width.numpy() * size_ratio.numpy() < target_size:
             resize_shape = (
-            math.ceil(height.numpy() * size_ratio.numpy()), math.ceil(width.numpy() * size_ratio.numpy()))
+            math.ceil(width.numpy() * size_ratio.numpy()), math.ceil(height.numpy() * size_ratio.numpy()))
         else:
-            resize_shape = (int(height.numpy() * size_ratio.numpy()), int(width.numpy() * size_ratio.numpy()))
+            resize_shape = (int(width.numpy() * size_ratio.numpy()), int(height.numpy() * size_ratio.numpy()))
         # resize_shape = (int(height.numpy() * size_ratio.numpy()), int(width.numpy() * size_ratio.numpy()))
         # resize_shape = (int(width.numpy() * size_ratio.numpy()), int(height.numpy() * size_ratio.numpy()))
         image_resized = tf.image.resize(image, resize_shape)
@@ -225,10 +225,6 @@ def load_data():
     # train_ds = tf.data.Dataset.list_files('miniimagenet/images_test/*.jpg', shuffle=False) #images images_test
     # train_ds = tf.data.Dataset.list_files('/data/volume_2/miniimagenet/images/*.jpg', shuffle=False)
     train_ds_name = train_ds
-    # train_ds = tf.data.Dataset.list_files('D:/Dropbox/TuD work/ScreenAI_Privacy_Underscreen/UPC_ICCP21_Code-main/Train/Toled/HQ/*.png', shuffle=False)
-    # train_ds = tf.data.Dataset.list_files('Train/Poled/HQ/*.png', shuffle=False)
-    # train_ds = tf.data.Dataset.list_files(data_path, shuffle=False)
-    # train_ds = train_ds.shuffle(240, reshuffle_each_iteration=True)
 
     AUTOTUNE = tf.data.experimental.AUTOTUNE
 
@@ -265,7 +261,6 @@ def load_data():
 
 
 def load_pattern():
-    # pattern_path = 'D:/Dropbox/TuD work/ScreenAI_Privacy_Underscreen/UPC_ICCP21_Code-main/data/pixelPatterns/POLED_42.png'
     pattern_path = 'data/pixelPatterns/POLED_42.png'
     # pattern_path = 'data/pixelPatterns/POLED_21.png'
     # pattern_path = '/data/volume_2/optimize_display_POLED_400PPI/data/pixelPatterns/POLED_42.png'
@@ -536,37 +531,37 @@ def optimize_pattern_with_data(opt):
         target_layers = [model_gradcam.layer4]
     elif opt.pretrained == 'mobilenet_v3_large':
         model_gradcam = models.mobilenet_v3_large(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./mobilenet_v3_large_miniimagenet_robust.pth"  # mobilenet_v3_large_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./mobilenet_v3_large_miniimagenet_robust.pth" # mobilenet_v3_large_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.features[-1]]
     elif opt.pretrained == 'mobilenet_v3_small':
         model_gradcam = models.mobilenet_v3_small(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./mobilenet_v3_small_miniimagenet_robust.pth"  # mobilenet_v3_small_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./mobilenet_v3_small_miniimagenet_robust.pth" # mobilenet_v3_small_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.features[-1]]
     elif opt.pretrained == 'shufflenet_v2_x0_5':
         model_gradcam = models.shufflenet_v2_x0_5(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./shufflenetv2_x0_5_miniimagenet_robust.pth"  # shufflenetv2_x0_5_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./shufflenetv2_x0_5_miniimagenet_robust.pth" # shufflenetv2_x0_5_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.conv5]
     elif opt.pretrained == 'shufflenet_v2_x1_0':
         model_gradcam = models.shufflenet_v2_x1_0(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./shufflenetv2_x1_0_miniimagenet_robust.pth"  # shufflenetv2_x1_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./shufflenetv2_x1_0_miniimagenet_robust.pth" # shufflenetv2_x1_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.conv5]
     elif opt.pretrained == 'shufflenet_v2_x1_5':
         model_gradcam = models.shufflenet_v2_x1_5(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./shufflenetv2_x1_5_miniimagenet_robust.pth"  # shufflenetv2_x1_5_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./shufflenetv2_x1_5_miniimagenet_robust.pth" # shufflenetv2_x1_5_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.conv5]
     elif opt.pretrained == 'shufflenet_v2_x2_0':
         model_gradcam = models.shufflenet_v2_x2_0(num_classes=100).to(device_gradcam)
-        weights_path_gradcam = "./shufflenetv2_x2_0_miniimagenet_robust.pth"  # shufflenetv2_x2_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path_gradcam = "./shufflenetv2_x2_0_miniimagenet_robust.pth" # shufflenetv2_x2_miniimagenet_Nointerfer_full_SGD.pth
         assert os.path.exists(weights_path_gradcam), "file: '{}' dose not exist.".format(weights_path_gradcam)
         model_gradcam.load_state_dict(torch.load(weights_path_gradcam, map_location=device_gradcam))
         target_layers = [model_gradcam.conv5]
@@ -648,22 +643,22 @@ def optimize_pattern_with_data(opt):
         weights_path = "./resNet18_miniimagenet_robust.pth"  # resNet18_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'mobilenet_v3_large':
         model = models.mobilenet_v3_large(num_classes=100).to(device)
-        weights_path = "./mobilenet_v3_large_miniimagenet_robust.pth"  # mobilenet_v3_large_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./mobilenet_v3_large_miniimagenet_robust.pth" # mobilenet_v3_large_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'mobilenet_v3_small':
         model = models.mobilenet_v3_small(num_classes=100).to(device)
-        weights_path = "./mobilenet_v3_small_miniimagenet_robust.pth"  # mobilenet_v3_small_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./mobilenet_v3_small_miniimagenet_robust.pth" # mobilenet_v3_small_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'shufflenet_v2_x0_5':
         model = models.shufflenet_v2_x0_5(num_classes=100).to(device)
-        weights_path = "./shufflenetv2_x0_5_miniimagenet_robust.pth"  # shufflenetv2_x0_5_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./shufflenetv2_x0_5_miniimagenet_robust.pth" # shufflenetv2_x0_5_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'shufflenet_v2_x1_0':
         model = models.shufflenet_v2_x1_0(num_classes=100).to(device)
-        weights_path = "./shufflenetv2_x1_0_miniimagenet_robust.pth"  # shufflenetv2_x1_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./shufflenetv2_x1_0_miniimagenet_robust.pth" # shufflenetv2_x1_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'shufflenet_v2_x1_5':
         model = models.shufflenet_v2_x1_5(num_classes=100).to(device)
-        weights_path = "./shufflenetv2_x1_5_miniimagenet_robust.pth"  # shufflenetv2_x1_5_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./shufflenetv2_x1_5_miniimagenet_robust.pth" # shufflenetv2_x1_5_miniimagenet_Nointerfer_full_SGD.pth
     elif opt.pretrained == 'shufflenet_v2_x2_0':
         model = models.shufflenet_v2_x2_0(num_classes=100).to(device)
-        weights_path = "./shufflenetv2_x2_0_miniimagenet_robust.pth"  # shufflenetv2_x2_miniimagenet_Nointerfer_full_SGD.pth
+        weights_path = "./shufflenetv2_x2_0_miniimagenet_robust.pth" # shufflenetv2_x2_miniimagenet_Nointerfer_full_SGD.pth
 
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_state_dict(torch.load(weights_path, map_location=device))
@@ -709,7 +704,12 @@ def optimize_pattern_with_data(opt):
             greenpixels_intensity_count = 0
             bluepixels_intensity_count = 0
 
-
+            redpixels_intensity_prob = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
+            greenpixels_intensity_prob = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
+            bluepixels_intensity_prob = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
+            redpixels_intensity_diff = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
+            greenpixels_intensity_diff = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
+            bluepixels_intensity_diff = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
 
             _, img_ori_height, img_ori_width, _ = tf.shape(batch_img)
 
@@ -802,10 +802,12 @@ def optimize_pattern_with_data(opt):
                     [all_display_red_mask_ori, all_display_green_mask_ori, all_display_blue_mask_ori],
                     axis=2)
 
+
                 itini_intensity_temp = opt.itini_intensity
                 itstep_size_temp = opt.itstep_size
                 opt.itstep_size = 1
                 opt.itini_intensity = 1
+
 
 
             redpixels_intensity_prob = np.zeros((int(opt.maxperturbation_power / opt.itstep_size),), dtype=np.float32)
@@ -1225,7 +1227,7 @@ def optimize_pattern_with_data(opt):
 
                     # test3 = tf.squeeze(captured)
                     # test3 = np.array(test3)
-                    #
+
                     # if captured.shape[2] == 1:
                     #     captured_test = np.reshape(captured, (captured.shape[0], captured.shape[1]))
                     #     captured_test = captured_test[0, :, :, :].numpy()
@@ -1238,9 +1240,9 @@ def optimize_pattern_with_data(opt):
                     #             np.amax(captured_test) - np.amin(captured_test))
                     # plt.imshow(captured_test)
                     # plt.show()
-                    #
-                    # # test4 = tf.squeeze(deconved)
-                    # # test4 = np.array(test4)
+
+                    # test4 = tf.squeeze(deconved)
+                    # test4 = np.array(test4)
                     # plt.imshow(deconved[0, :, :, :].numpy())
                     # plt.show()
 
@@ -1269,11 +1271,11 @@ def optimize_pattern_with_data(opt):
                     img_path = os.path.join(img_temp_dir, 'temp.jpg')
                     # Util.save_image(captured_img, img_path)
                     image_pil = None
-                    if captured_img.shape[2] == 1:
-                        captured_img = np.reshape(captured_img, (captured_img.shape[0], captured_img.shape[1]))
-                        image_pil = Image.fromarray(captured_img, 'L')
+                    if deconved_img.shape[2] == 1:
+                        deconved_img = np.reshape(deconved_img, (deconved_img.shape[0], deconved_img.shape[1]))
+                        image_pil = Image.fromarray(deconved_img, 'L')
                     else:
-                        image_pil = Image.fromarray(captured_img)
+                        image_pil = Image.fromarray(deconved_img)
                     image_pil.save(img_path)
                     img = Image.open(img_path).convert('RGB')
                     img_np = np.array(img, dtype=np.uint8)
@@ -1344,20 +1346,20 @@ def optimize_pattern_with_data(opt):
                             greenopt_pixel_mask = interfer_img_index[:, :, 1] * grayscale_cam_mask
                             blueopt_pixel_mask = interfer_img_index[:, :, 2] * grayscale_cam_mask
 
-                            if captured.shape[2] == 1:
-                                captured_test = np.reshape(captured, (captured.shape[0], captured.shape[1]))
-                                captured_test = captured_test[0, :, :, :].numpy()
-                                captured_test = (captured_test - np.amin(captured_test)) / (
-                                        np.amax(captured_test) - np.amin(captured_test))
+                            if deconved.shape[2] == 1:
+                                deconved_test = np.reshape(deconved, (deconved.shape[0], deconved.shape[1]))
+                                deconved_test = deconved_test[0, :, :, :].numpy()
+                                deconved_test = (deconved_test - np.amin(deconved_test)) / (
+                                        np.amax(deconved_test) - np.amin(deconved_test))
                             else:
-                                captured_test = captured
-                                captured_test = captured_test[0, :, :, :].numpy()
-                                captured_test = (captured_test - np.amin(captured_test)) / (
-                                        np.amax(captured_test) - np.amin(captured_test))
+                                deconved_test = deconved
+                                deconved_test = deconved_test[0, :, :, :].numpy()
+                                deconved_test = (deconved_test - np.amin(deconved_test)) / (
+                                        np.amax(deconved_test) - np.amin(deconved_test))
 
-                            red_captured_mask = captured_test[:, :, 0] * grayscale_cam_mask
-                            green_captured_mask = captured_test[:, :, 1] * grayscale_cam_mask
-                            blue_captured_mask = captured_test[:, :, 2] * grayscale_cam_mask
+                            red_deconved_mask = deconved_test[:, :, 0] * grayscale_cam_mask
+                            green_deconved_mask = deconved_test[:, :, 1] * grayscale_cam_mask
+                            blue_deconved_mask = deconved_test[:, :, 2] * grayscale_cam_mask
 
                             # test = redopt_pixel_mask.reshape(-1)
 
@@ -1470,9 +1472,9 @@ def optimize_pattern_with_data(opt):
                             greenopt_pixel_effect = np.sum(greenopt_pixel_pick_mask * grayscale_cam)
                             blueopt_pixel_effect = np.sum(blueopt_pixel_pick_mask * grayscale_cam)
 
-                            redopt_pixel_effect_v1 = np.sum(red_captured_mask)
-                            greenopt_pixel_effect_v1 = np.sum(green_captured_mask)
-                            blueopt_pixel_effect_v1 = np.sum(blue_captured_mask)
+                            redopt_pixel_effect_v1 = np.sum(red_deconved_mask)
+                            greenopt_pixel_effect_v1 = np.sum(green_deconved_mask)
+                            blueopt_pixel_effect_v1 = np.sum(blue_deconved_mask)
 
                             find_color_flag = 0
                         else:
@@ -2990,14 +2992,14 @@ if __name__ == '__main__':
                         help='save deblurred images')  # dec_allcolorbar_p10_v1
     parser.add_argument('--save_temp_dir', type=str, default='allcolor_intensity_process_temp',
                         help='save processing temp images')
-    parser.add_argument('--images_mode', type=str, default='images_test', help='images mode: images/images_test')
+    parser.add_argument('--images_mode', type=str, default='images', help='images mode: images/images_test')
     parser.add_argument('--statusbarcolor_flag', type=int, default=3, help='statusbar color flag')
     parser.add_argument('--itstep_size', type=float, default=0.1, help='Iteration step size')
     parser.add_argument('--itini_intensity', type=float, default=0.5, help='Iteration initial intensity')
     parser.add_argument('--maxperturbation_power', type=float, default=10, help='max perturbation_power')
     parser.add_argument('--maxscreen_brightness', type=float, default=2, help='max screen_brightness')
     parser.add_argument('--probdiff_threshold', type=float, default=0, help='max screen_brightness')
-    parser.add_argument('--pretrained', type=str, default='shufflenet_v2_x2_0', help='pretrained network model mobilenet_v3_large')
+    parser.add_argument('--pretrained', type=str, default='resnet18', help='pretrained network model')
     parser.add_argument('--save_mode', type=str, default='both', help='both, all or crop')
     # parser.add_argument('--gpu_flag', type=int, default=1, help='statusbar color flag')
 

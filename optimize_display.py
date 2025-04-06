@@ -73,10 +73,10 @@ img_width = 512
 def load_data():
 
     # base_dir = os.path.dirname(os.path.dirname(__file__))
-    # # 获取当前文件目录
+    # # Get the current file directory
     # data_path = os.path.abspath(os.path.join(base_dir, 'Train/Poled/HQ/*.png', ""))
-    # # 改为绝对路径
-    # # 获取文件拼接后的路径
+    # # Change to absolute path
+    # # Get the path after the file is spliced
     # D: / Dropbox / TuD work / ScreenAI_Privacy_Underscreen / UPC_ICCP21_Code - main / Train / Poled / HQ / *.png
 
     # todo: change path to your training image directory
