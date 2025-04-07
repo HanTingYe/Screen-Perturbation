@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Embed screen perturbation into the existing dataset
 We built an under-screen camera imaging model to evaluate how the proposed screen perturbations affect deep learning models' decisions. To apply screen perturbations to an existing image dataset, follow the steps below for each task:
 
-** Image classification task:
+** Image classification task:**
 Please download the [miniImageNet](https://www.kaggle.com/datasets/arjunashok33/miniimagenet) dataset. Then run the command below to generate the corresponding perturbed images:
 ```
 python add_perturbation_synthesized.py
@@ -27,7 +27,7 @@ If you want to apply an image restoration algorithm (e.g., a deblurring step) to
 ```
 python add_perturbation_synthesized_deblurred.py
 ```
-** Face recogniztion task:
+** Face recogniztion task:**
 Please download the [FaceScrub](https://vintage.winklerbros.net/facescrub.html) dataset. Then run the command below to generate the corresponding perturbed face images:
 ```
 python add_perturbation_synthesized_face.py
@@ -43,6 +43,7 @@ We set up a testbed to capture real images using USC smartphones. As shown in th
 ![overview2](./Overview2.png)
 
 All the high-resolution full-face images used on the 4K monitor are from the XGaze dataset. To embed screen perturbations into the captured images from our testbed, use the following commands:
+
 ** One-pixel screen perturbation:
 ```
 python add_perturbation_smartphone_onepixel.py
