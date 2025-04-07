@@ -46,15 +46,15 @@ We set up a testbed to capture real images using USC smartphones. As shown in th
 
 All the high-resolution full-face images used on the 4K monitor are from the XGaze dataset. To embed screen perturbations into the captured images from our testbed, use the following commands:
 
-** One-pixel screen perturbation:
+* ### One-pixel screen perturbation:
 ```
 python add_perturbation_smartphone_onepixel.py
 ```
-** Multiple-pixel screen perturbation:
+* ### Multiple-pixel screen perturbation:
 ```
 python add_perturbation_smartphone_allpixels.py
 ```
-** Baseline images (no perturbation, display turned off):
+* ### Baseline images (no perturbation, display turned off):
 ```
 add_perturbation_smartphone_displayoff.py
 ```
