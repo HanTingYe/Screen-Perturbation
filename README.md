@@ -44,7 +44,7 @@ We set up a testbed to capture real images using USC smartphones. As shown in th
 
 ![overview2](./Overview2.png)
 
-All the high-resolution full-face images used on the 4K monitor are from the XGaze dataset. To embed screen perturbations into the captured images from our testbed, use the following commands:
+All the high-resolution full-face images used on the 4K monitor are from the [XGaze](https://ait.ethz.ch/xgaze) dataset. To embed screen perturbations into the captured images from our testbed, use the following commands:
 
 * ### One-pixel screen perturbation:
 ```
