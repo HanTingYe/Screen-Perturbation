@@ -54,7 +54,7 @@ python add_perturbation_smartphone_onepixel.py
 ```
 python add_perturbation_smartphone_allpixels.py
 ```
-* ### Baseline images (no perturbation, screen display turned off):
+* ### Baseline images (only passive screen perturbation, screen display turned off):
 ```
 add_perturbation_smartphone_displayoff.py
 ```
